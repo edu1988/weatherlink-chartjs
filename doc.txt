@@ -1,0 +1,5 @@
+Instrucciones para usar esta aplicación
+
+1. Descargar el código
+
+2. Subirlo por ftp a tu servidor, manteniendo la estructura de carpetas.
