@@ -1,0 +1,46 @@
+div#graficas {
+  width: 80%;
+  margin: 0 auto;
+}
+
+div#graficas > div.contenedor {
+  margin: 40px 0px;
+  margin-bottom: 60px;
+}
+
+div.titulo-grafica {
+  color: rgba(0, 0, 0, 0.6);
+  padding-bottom: 6px;
+  font-size: 17px;
+  font-weight: normal;
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+div.bloque-inputs {
+  text-align: center;
+}
+
+div.bloque-input {
+  display: inline-block;
+}
+
+#graficas canvas {
+  margin-bottom: 15px;
+}
+
+#graficas label {
+  margin-right: 20px;
+  margin-left: 4px;
+  vertical-align: 2.5px;
+  font-size: 0.7em;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@media (min-width: 980px) {
+  #graficas label {
+    font-size: 1em;
+    vertical-align: 1.5px;
+    margin-right: 30px;
+  }
+}
