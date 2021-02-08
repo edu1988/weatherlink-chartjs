@@ -10,7 +10,6 @@ app.propiedades_graficas_actuales = (function () {
         temperatura: {
             id: 'temperatura', //Esta propiedad ha de llamarse como la propiedad del objeto
             tipo: 'line',
-            titulo: "Temperatura",
             unidad: "ºC",
             data_inicial: 'data',
             data: {
@@ -31,10 +30,12 @@ app.propiedades_graficas_actuales = (function () {
             checkbox: {
                 tempout: {
                     label: 'Temperatura',
+                    titulo: "Temperatura",
                     checked: true
                 },
                 dew: {
                     label: 'Temp. de rocío',
+                    titulo: 'Tempo. de rocío',
                     dataset: {
                         id: 'dew',
                         url_data: '/api.php?q=dew',
@@ -45,6 +46,7 @@ app.propiedades_graficas_actuales = (function () {
                 },
                 windchill: {
                     label: 'Sensación térmica',
+                    titulo: "Windchill",
                     dataset: {
                         id: 'windchill',
                         url_data: '/api.php?q=windchill',
@@ -90,7 +92,7 @@ app.propiedades_graficas_actuales = (function () {
         presion: {
             id: 'presion', //Esta propiedad ha de llamarse como la propiedad del objeto
             tipo: 'line',
-            titulo: "Presión barométrica",
+            titulo: 'Presión',
             unidad: "hPa",
             data_inicial: 'pres',
             pres: {
@@ -118,8 +120,8 @@ app.propiedades_graficas_actuales = (function () {
         lluvia: {
             id: 'lluvia', //Esta propiedad ha de llamarse como la propiedad del objeto
             tipo: 'bar',
-            titulo: "Precipitación",
-            unidad: "mm",
+            titulo: 'Lluvia',
+            unidad: 'mm',
             data_inicial: 'rain',
             rain: {
                 url_data: '/api.php?q=rain',

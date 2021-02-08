@@ -152,6 +152,9 @@ class Fichero
             $data = $this->getDataLluviaTotalizadaPorHoras();
         }
 
+        /*Campo compuesto (muchas claves) */
+        $campos = explode('-', $campo);
+
         if (!in_array($campo, $excep)) {
             $data = array();
 
@@ -161,7 +164,10 @@ class Fichero
 
             for ($i = $filas_saltar; $i < $num_filas; $i++) {
                 $data['horas'][] = self::$array[$i][self::$constantes['campos']['time']];
-                $data[$campo][] = self::$array[$i][self::$constantes['campos'][$campo]];
+
+                foreach ($campos as $campo) {
+                    $data[$campo][] = self::$array[$i][self::$constantes['campos'][$campo]];
+                }
             }
         }
 

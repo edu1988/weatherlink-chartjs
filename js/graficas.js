@@ -1,4 +1,8 @@
-var app = app || {};
+var AppGraficas = {
+
+}
+
+
 
 app.crear_graficas = function (propiedades) {
 
@@ -144,13 +148,6 @@ app.crear_graficas = function (propiedades) {
 
             if (inputs[input].checked) {
                 inputElem.checked = true;
-            }
-
-            if (inputs[input].titulo) {
-                var titulo = document.createElement('p');
-                titulo.classList.add('titulo-bloque-inputs');
-                titulo.innerText = inputs[input].titulo;
-                bloqueInputs.appendChild(titulo);
             }
 
             var label = document.createElement('label');
@@ -501,8 +498,10 @@ app.crear_graficas = function (propiedades) {
         var unidad = propiedades.unidad || '';
 
         var label = function (tooltipItems, data) {
-            var etiqueta = propiedades.titulo,
-                xlabel = data.labels[tooltipItems.index],
+
+            var etiqueta = propiedades.titulo ||
+                propiedades.checkbox[data.datasets[tooltipItems.datasetIndex].id].titulo;
+            xlabel = data.labels[tooltipItems.index],
                 ylabel = tooltipItems.value;
             var labelGeneral = xlabel + ' - ' + etiqueta + ': ' + ylabel + ' ' + unidad;
 
