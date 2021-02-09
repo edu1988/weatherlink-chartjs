@@ -1,5 +1,79 @@
 var AppGraficas = AppGraficas || {};
 
+AppGraficas.vars = (function () {
+
+    var escritorio = window.innerWidth > 800,
+
+        /*Aspect Ratio Gráficas */
+        aspectRatioEscritorio = 2.7,
+        aspectRatioMovil = 1.8,
+        aspectRatio = escritorio ? aspectRatioEscritorio : aspectRatioMovil,
+
+        /*Tamaño puntos gráfica de viento */
+        radioPuntosVientoEscritorio = 3,
+        radioPuntosMovil = 1,
+        radioPuntosViento = escritorio ? radioPuntosVientoEscritorio : radioPuntosMovil,
+
+        /*Aspect Ratio Grafica distribución de viento */
+        asRatGrafDistVientEs = 2.5,
+        asRatGrafDistVientMov = 1.1,
+        asRatGrafDistVient = escritorio ? asRatGrafDistVientEs : asRatGrafDistVientMov,
+
+        /*Contenedor global de las gráficas */
+        divGraficas = document.getElementById('graficas');
+
+    const variables = {
+
+        globales: {
+            divGraficas: divGraficas,
+        },
+
+        defaultDataset: {
+            backgroundColor: 'rgba(0, 0, 0, 0.0)',
+            borderColor: 'rgb(45,45,45)',
+            borderWidth: 2,
+            cubicInterpolationMode: 'monotone',
+        },
+
+        defaultOptions: {
+            mode: "index",
+            intersect: false,
+            responsive: true,
+            pointRadius: 0,
+            tooltipsBgcolor: "rgba(0,0,0,0.4)",
+            legendOnClick: null,
+            legendDisplay: false,
+            aspectRatio: aspectRatio,
+            aspectRatioDV: asRatGrafDistVient,
+            radioPuntosViento: radioPuntosViento,
+            xAxes: {
+                drawTicks: false,
+                ticksMaxRotation: 0,
+                ticksPadding: 10,
+                ticksAutoSkip: false, //Impide que las etiquetas se solapen
+                ticksEjeX: function (value) {
+                    // return value;
+                    var label = value.substring(0, value.length - 3);
+                    if (value.endsWith("00")) {
+                        return escritorio ? label + "h" : label % 2 == 0 ? label + "h" : null;
+                    }
+                }
+            },
+            yAxes: {
+                suggestedMax: undefined,
+                suggestedMin: undefined,
+                stepSize: 1,
+                maxTicksLimits: 10,
+                ticksPadding: 10,
+                drawTicks: false,
+                drawBorder: false,
+            },
+        }
+    }
+
+    return variables;
+})();
+
 AppGraficas.propiedades = propiedades = {
 
     temperatura: {
@@ -158,14 +232,14 @@ AppGraficas.propiedades = propiedades = {
                     }
                 }
             },
-            acumulada: {
+            racum: {
                 label: 'Acum.',
                 data: {
-                    url_data: '/datos-actuales-json/acumulada',
+                    url_data: '/api.php?q=racum',
                     labels: 'horas',
                     datasets: {
-                        acumulada: {
-                            id: 'acumulada',
+                        racum: {
+                            id: 'racum',
                             type: 'line',
                             borderColor: 'rgba(0,76,255,0.6)',
                             backgroundColor: 'rgba(0,76,255,0.1)',
@@ -174,7 +248,7 @@ AppGraficas.propiedades = propiedades = {
                     /*Función optativa para recalcular un nuevo suggestedMax */
                     suggestedMin: 0,
                     suggestedMax: function (value) {
-                        return Math.ceil(value);
+                        return Math.ceil(value) + 1;
                     }
                 }
             }
@@ -238,6 +312,7 @@ AppGraficas.propiedades = propiedades = {
                 hispeed: {
                     id: 'hispeed',
                     borderColor: 'rgba(101,194,132,0.8)',
+                    borderDash: [4, 3],
                 },
                 windspeed: {
                     id: 'windspeed',
@@ -267,39 +342,39 @@ AppGraficas.propiedades = propiedades = {
         },
     },
 
-    // direccionv: {
-    //     id: 'direccionv', //Esta propiedad ha de llamarse como la propiedad del objeto
-    //     tipo: 'line',
-    //     titulo: "Dirección de viento",
-    //     data_inicial: 'dirv',
-    //     dirv: {
-    //         url_data: '/datos-actuales-json/horas-dirs',
-    //         objeto_data: undefined,
-    //         datos: undefined,
-    //         labels: 'horas',
-    //         datasets: {
-    //             /*Cada propiedad del objeto datasets debe llamarse como la clave
-    //             de los datos que llegan desde el backend */
-    //             dirs: {
-    //                 id: 'dirs',
-    //                 borderColor: 'rgba(88,132,252,0.6)',
-    //                 showLine: false,
-    //                 pointBackgroundColor: "rgba(156, 9, 51)",
-    //                 pointBorderColor: "rgba(156, 9, 51)",
-    //                 pointRadius: defaultOptions.radioPuntosViento,
-    //                 pointBorderWidth: 1
-    //             }
-    //         }
-    //     },
+    direccionv: {
+        id: 'direccionv', //Esta propiedad ha de llamarse como la propiedad del objeto
+        tipo: 'line',
+        titulo: "Dirección de viento",
+        data_inicial: 'dirv',
+        dirv: {
+            url_data: '/api.php?q=dir',
+            objeto_data: undefined,
+            datos: undefined,
+            labels: 'horas',
+            datasets: {
+                /*Cada propiedad del objeto datasets debe llamarse como la clave
+                de los datos que llegan desde el backend */
+                dir: {
+                    id: 'dir',
+                    borderColor: 'rgba(88,132,252,0.6)',
+                    showLine: false,
+                    pointBackgroundColor: "rgba(156, 9, 51)",
+                    pointBorderColor: "rgba(156, 9, 51)",
+                    pointRadius: AppGraficas.vars.defaultOptions.radioPuntosViento,
+                    pointBorderWidth: 0,
+                }
+            }
+        },
 
-    //     opciones: {
-    //         yAxeType: 'category',
-    //         yAxeLabels: [
-    //             "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-    //             "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
-    //         ],
-    //     },
-    // },
+        opciones: {
+            yAxeType: 'category',
+            yAxeLabels: [
+                "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+            ],
+        },
+    },
 
     // distv: {
     //     id: 'distv', //Esta propiedad ha de llamarse como la propiedad del objeto

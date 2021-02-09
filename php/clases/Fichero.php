@@ -142,14 +142,55 @@ class Fichero
         return $lluvias_totalizadas;
     }
 
+    private function getDataLluviaAcumulada()
+    {
+        $campo_rain = self::$constantes['campos']['rain'];
+        $campo_time = self::$constantes['campos']['time'];
+
+        $data = array(); //Array donde guardaremos los datos
+        $num_filas = $this->getNumFilas(); //Número total de lineas del fichero
+        $filas_saltar = $num_filas - self::$lineas_24h;
+
+        //Recorremos el fichero desde el comienzo para cálcular el acumulado inicial
+        $acumulado_inicial = 0;
+        $i = 0;
+        while ($i <= $filas_saltar) {
+            $acumulado_inicial += (float) self::$array[$i][$campo_rain];
+            $i++;
+        }
+
+        //Guardamos ese primer valor acumulado en el array (será el primer valor)
+        $data['horas'][] = self::$array[$i - 1][$campo_time];
+        $data['racum'][] = round($acumulado_inicial, 1);
+
+        //Recorremos el resto del fichero y vamos totalizando, reseteando a las 00:00
+        $acum = $acumulado_inicial;
+        for ($j = $i; $j < $num_filas; $j++) {
+            $acum = round($acum + self::$array[$j - 1][$campo_rain], 1);
+
+            if (self::$array[$j][$campo_time] == '0:10') {
+                $acum = round((float) self::$array[$j][$campo_rain], 1);
+            }
+
+            $data['horas'][] = self::$array[$j][$campo_time];
+            $data['racum'][] = $acum;
+        }
+
+        return $data;
+    }
+
     /*Función genérica para obtener las últimas 24 horas de datos
     de cualquier dato de formato simple (temps, hums, etc) */
     public function getData($campo, $json = true)
     {
-        $excep = ['rainh'];
+        $excep = ['rainh', 'racum'];
 
         if ($campo == 'rainh') {
             $data = $this->getDataLluviaTotalizadaPorHoras();
+        }
+
+        if ($campo == 'racum') {
+            $data = $this->getDataLluviaAcumulada();
         }
 
         /*Campo compuesto (muchas claves) */

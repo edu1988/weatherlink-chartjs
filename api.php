@@ -9,6 +9,4 @@ if (!isset($_GET['q'])) {
 
 $clave = $_GET['q'];
 
-
-
 Fichero::getInstance()->getData($clave);
