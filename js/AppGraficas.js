@@ -342,12 +342,12 @@ AppGraficas.app = {
                         chart.config.data = response;
 
                         /*Modificar la opcion de suggestedMax de la gráfica si es necesario */
-                        // if (propiedades[nombre_grafica].opciones.hasOwnProperty('calculateSugMax')) {
-                        //     /*Obtenemos la función de cálculo del suggestedMax */
-                        //     var funcion = objeto_data.suggestedMax || propiedades[nombre_grafica].opciones.calculateSugMax.function;
+                        if (objeto_data.hasOwnProperty('suggestedMax')) {
+                            /*Obtenemos la función de cálculo del suggestedMax */
+                            var funcion = objeto_data.suggestedMax;
+                            modificarSugMax(chart, response, funcion);
+                        }
 
-                        //     modificarSugMax(chart, response, funcion);
-                        // }
                         chart.update();
                     });
                 }
@@ -413,6 +413,9 @@ AppGraficas.app = {
         }
 
         function suggestedMaxFn(opciones, objeto_data_response) {
+
+            var suggestedMax = opciones.suggestedMax === undefined ? defaultOptions.yAxes.suggestedMax : opciones.suggestedMax;
+
             if (opciones.hasOwnProperty('calculateSugMax')) {
                 /*Obtenemos el los datos (mayor dato) del dataset a partir del cual queremos calcular
                 el suggestedMax (a partir de su posición en el array total de datasets) */
@@ -428,7 +431,6 @@ AppGraficas.app = {
                 return suggestedMax;
             }
 
-            var suggestedMax = opciones.suggestedMax === undefined ? defaultOptions.yAxes.suggestedMax : opciones.suggestedMax;
             return suggestedMax;
         }
 
@@ -573,4 +575,7 @@ AppGraficas.app = {
 
 }
 
-AppGraficas.app.iniciar(AppGraficas.propiedades);
+document.addEventListener('DOMContentLoaded', function () {
+    AppGraficas.vars = AppGraficas.init_vars();
+    AppGraficas.app.iniciar(AppGraficas.propiedades);
+});

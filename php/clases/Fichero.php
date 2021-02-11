@@ -152,29 +152,45 @@ class Fichero
         $filas_saltar = $num_filas - self::$lineas_24h;
 
         //Recorremos el fichero desde el comienzo para cálcular el acumulado inicial
-        $acumulado_inicial = 0;
         $i = 0;
+        $acumulado_inicial = self::$array[$i][$campo_rain];
         while ($i <= $filas_saltar) {
-            $acumulado_inicial += (float) self::$array[$i][$campo_rain];
+            // echo "Hora: " . self::$array[$i][$campo_time];
+            // echo " - Lluvia: " . self::$array[$i][$campo_rain];
+            // echo " - Acum: " . $acum;
+            // echo "<br>";
+            $siguiente_acumul = self::$array[$i + 1][$campo_rain];
+            $acumulado_inicial += $siguiente_acumul;
             $i++;
         }
+
+        $acumulado_inicial -= $siguiente_acumul;
 
         //Guardamos ese primer valor acumulado en el array (será el primer valor)
         $data['horas'][] = self::$array[$i - 1][$campo_time];
         $data['racum'][] = round($acumulado_inicial, 1);
 
         //Recorremos el resto del fichero y vamos totalizando, reseteando a las 00:00
+        $acumulado_inicial += self::$array[$i][$campo_rain];
         $acum = $acumulado_inicial;
-        for ($j = $i; $j < $num_filas; $j++) {
-            $acum = round($acum + self::$array[$j - 1][$campo_rain], 1);
 
-            if (self::$array[$j][$campo_time] == '0:10') {
-                $acum = round((float) self::$array[$j][$campo_rain], 1);
-            }
+        for ($j = $i; $j < $num_filas - 1; $j++) {
 
             $data['horas'][] = self::$array[$j][$campo_time];
-            $data['racum'][] = $acum;
+            $data['racum'][] = round($acum, 1);
+
+            $isMidnight = preg_match('/^[0]+:[0]+$/', self::$array[$j][$campo_time]);
+
+            $acum += self::$array[$j + 1][$campo_rain];
+
+            if ($isMidnight) {
+                $acum = self::$array[$j + 1][$campo_rain];
+            }
         }
+
+        //Último valor
+        $data['horas'][] = self::$array[$j][$campo_time];
+        $data['racum'][] = round($acum, 1);
 
         return $data;
     }
@@ -183,20 +199,20 @@ class Fichero
     de cualquier dato de formato simple (temps, hums, etc) */
     public function getData($campo, $json = true)
     {
-        $excep = ['rainh', 'racum'];
+        $excep = [
+            'rainh' => 'getDataLluviaTotalizadaPorHoras',
+            'racum' => 'getDataLluviaAcumulada'
+        ];
 
-        if ($campo == 'rainh') {
-            $data = $this->getDataLluviaTotalizadaPorHoras();
-        }
-
-        if ($campo == 'racum') {
-            $data = $this->getDataLluviaAcumulada();
+        if (in_array($campo, array_keys($excep))) {
+            $funcion = $excep[$campo];
+            $data = $this->$funcion();
         }
 
         /*Campo compuesto (muchas claves) */
         $campos = explode('-', $campo);
 
-        if (!in_array($campo, $excep)) {
+        if (!in_array($campo, array_keys($excep))) {
             $data = array();
 
             $num_filas = $this->getNumFilas();
