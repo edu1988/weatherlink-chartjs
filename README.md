@@ -30,6 +30,8 @@ El archivo html donde se pongan las gráficas deberá estar en el root del proye
 
 Finalmente habrá que añadir un div con id = "graficas" en el lugar del HTML donde se quieran cargar las gráficas.
 
+<div id="graficas"></div>
+
 Recordar que el archivo desde el que se obtienen los datos ("downld02.txt") debe estar en el root del directorio. Este archivo debe mantener dicho nombre "downld02.txt", aunque en el archivo de php llamado "Constantes.php" se pueden configurar algunas de estas variables.
 
 Para ver un ejemplo de cómo quedan estas gráficas podéis verlas en la zona inferior de la siguiente página:
