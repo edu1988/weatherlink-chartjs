@@ -24,7 +24,7 @@ Enlace a los scripts que generan las gráficas:
 
 Enlazar también los estilos:
 
-<link rel="stylesheet" href="./graficas/css/graficas.css">
+< link rel="stylesheet" href="./graficas/css/graficas.css" >
 
 El archivo html donde se pongan las gráficas deberá estar en el root del proyecto, de no ser así, habrá que cambiar las rutas relativas en los enlaces a los scripts.
 
