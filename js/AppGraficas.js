@@ -2,9 +2,12 @@ var AppGraficas = AppGraficas || {}
 
 AppGraficas.app = {
 
-    iniciar: function (propiedades) {
-        /*Cargar las variables globales */
-        initVariables();
+    iniciar: function (graficas) {
+        /*Desglosar el parámetro en sus dos componentes (propiedades de las gráficas y variables) */
+        var propiedades = graficas.propiedades;
+        var globales = graficas.variables.globales;
+        var defaultOptions = graficas.variables.defaultOptions;
+        var defaultDataset = graficas.variables.defaultDataset;
 
         /*Iniciar la configuración global del Chart */
         initChartGlobalConf();
@@ -19,14 +22,6 @@ AppGraficas.app = {
 
             /*Obtenemos los datos para esa gráfica y creamos la gráfica */
             crearGrafica(info_grafica);
-        }
-
-
-        //Todas las funciones
-        function initVariables() {
-            this.globales = AppGraficas.vars.globales;
-            this.defaultOptions = AppGraficas.vars.defaultOptions;
-            this.defaultDataset = AppGraficas.vars.defaultDataset;
         }
 
         function initChartGlobalConf() {
@@ -85,7 +80,7 @@ AppGraficas.app = {
             divFila.appendChild(divColumna);
 
             /*Añadir la columna al contenedor general */
-            this.globales.divGraficas.appendChild(divFila);
+            globales.divGraficas.appendChild(divFila);
 
             /*Retornar el elemento canvas */
             return canvas;
@@ -312,9 +307,6 @@ AppGraficas.app = {
             /*Extraemos el chart en el que estamos operando */
             var chart = propiedades[nombre_grafica].chart;
 
-            /*Objeto donde está guardado o se guardará el data */
-            //var data_guardado = propiedades[nombre_grafica][nombre_data];
-
             /*Url que solo existirá en el caso de que solo haya que cambiar los datos */
             var url_cambiar_datos = propiedades[nombre_grafica].radio[nombre_data].url_data;
 
@@ -326,59 +318,40 @@ AppGraficas.app = {
                 /*Extraemos el objeto data necesario para crearlo */
                 var objeto_data = propiedades[nombre_grafica].radio[nombre_data].data || propiedades[nombre_grafica][nombre_data];
 
-                /*Vemos si hay datos guardados */
-                var datos_guardados = propiedades[nombre_grafica].radio[nombre_data].datos_guardados;
+                crearData(objeto_data).then(function (response) {
+                    /*Ponemos los datos en la gráfica */
+                    chart.config.data = response;
 
-                /*Si los hay los ponemos, si no, hacemos la petición */
-                if (datos_guardados != undefined) {
-                    chart.config.data = datos_guardados;
+                    /*Modificar la opcion de suggestedMax de la gráfica si es necesario */
+                    var sugMax = objeto_data.suggestedMax || propiedades[nombre_grafica].opciones.suggestedMax;
+                    sugMax = obtenerNuevoSugMax(response, sugMax);
+                    modificarSugMax(chart, sugMax);
+
+                    /*Actualizar chart */
                     chart.update();
-                } else {
-                    crearData(objeto_data).then(function (response) {
-                        /*Una vez que tenemos el data, lo guardamos para futuros usos*/
-                        propiedades[nombre_grafica].radio[nombre_data].datos_guardados = response;
-
-                        /*Lo ponemos en la gráfica y actualizamos */
-                        chart.config.data = response;
-
-                        /*Modificar la opcion de suggestedMax de la gráfica si es necesario */
-                        if (objeto_data.hasOwnProperty('suggestedMax')) {
-                            /*Obtenemos la función de cálculo del suggestedMax */
-                            var funcion = objeto_data.suggestedMax;
-                            modificarSugMax(chart, response, funcion);
-                        }
-
-                        chart.update();
-                    });
-                }
+                });
 
             } else {
                 /*Solo hay que cambiar los datos */
-                /*Comprobamos si ya están guardados de antes */
-                var datos_guardados = propiedades[nombre_grafica].radio[nombre_data].datos_guardados;
-                if (datos_guardados != undefined) {
-                    /*Hay datos guardados. Los ponemos*/
-                    chart.config.data.datasets[0].data = datos_guardados;
-                } else {
-                    /*Pedimos los nuevos datos */
-                    fetch(url_cambiar_datos, {
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                        .then(function (response) {
-                            return response.json();
-                        })
-                        .then(function (res) {
-                            //Guardamos los datos recibidos para el futuro
-                            propiedades[nombre_grafica].radio[nombre_data].datos_guardados = res;
+                /*Pedimos los nuevos datos */
+                fetch(url_cambiar_datos, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (res) {
+                        //Guardamos los datos recibidos para el futuro
+                        propiedades[nombre_grafica].radio[nombre_data].datos_guardados = res;
 
-                            chart.config.data.datasets[0].data = res;
-                        });
-                }
-                chart.update();
+                        chart.config.data.datasets[0].data = res;
+                    });
             }
+            chart.update();
         }
+
 
 
         function xAxes(opciones) {
@@ -414,34 +387,47 @@ AppGraficas.app = {
 
         function suggestedMaxFn(opciones, objeto_data_response) {
 
-            var suggestedMax = opciones.suggestedMax === undefined ? defaultOptions.yAxes.suggestedMax : opciones.suggestedMax;
+            var suggestedMax = opciones.suggestedMax;
 
-            if (opciones.hasOwnProperty('calculateSugMax')) {
+            if (typeof (suggestedMax) == 'object') {
                 /*Obtenemos el los datos (mayor dato) del dataset a partir del cual queremos calcular
                 el suggestedMax (a partir de su posición en el array total de datasets) */
-                var dataset_index = opciones.calculateSugMax.dataset_index;
+                var dataset_index = opciones.suggestedMax.dataset_index;
                 /*Obtenemos el array de datos completo */
                 var datos = objeto_data_response.datasets[dataset_index].data;
                 /*Obtenemos el valor más alto del array */
                 var max = Math.max(...datos);
                 /*Aplicamos la función para calcular el suggestedMax */
-                var funcion = opciones.calculateSugMax.function;
+                var funcion = opciones.suggestedMax.function;
                 var suggestedMax = funcion(max);
-
-                return suggestedMax;
             }
 
             return suggestedMax;
         }
 
-        function modificarSugMax(chart, data, funcion) {
-            /*Calculamos el valor mas alto del array de todos los datos (data) */
-            var datos = data.datasets[0].data;
-            var max = Math.max(...datos);
+        function obtenerNuevoSugMax(data, sugMax) {
+            var suggestedMax = sugMax;
+            if (typeof (sugMax) == 'object') {
+                suggestedMaxFn = sugMax.function;
 
-            /*Calculamos el suggestedMax con la función indicada */
-            var sugMax = funcion(max);
+                /*Máximo valor del primer dataset del data */
+                var datos = data.datasets[0].data;
+                var max = Math.max(...datos);
+                suggestedMax = suggestedMaxFn(max);
+            }
+            if (typeof (sugMax) == 'function') {
+                suggestedMaxFn = sugMax;
 
+                /*Máximo valor del primer dataset del data */
+                var datos = data.datasets[0].data;
+
+                var max = Math.max(...datos);
+                suggestedMax = suggestedMaxFn(max);
+            }
+            return suggestedMax;
+        }
+
+        function modificarSugMax(chart, sugMax) {
             /*Modificamos el sugMax del chart */
             chart.config.options.scales.yAxes[0].ticks.suggestedMax = sugMax;
         }
@@ -576,6 +562,9 @@ AppGraficas.app = {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    AppGraficas.vars = AppGraficas.init_vars();
-    AppGraficas.app.iniciar(AppGraficas.propiedades);
+    /*Obtener el parámetro principal (propiedades de las gráficas) */
+    var graficas = AppGraficas.getPropiedades();
+
+    /*Iniciar las gráficas */
+    AppGraficas.app.iniciar(graficas);
 });
