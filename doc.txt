@@ -1,9 +1,0 @@
-Instrucciones para usar esta aplicación
-
-1. Descargar el código
-
-2. Subirlo por ftp a tu servidor, manteniendo la estructura de carpetas.
-
-3. Cambiar el nombre del fichero
-
-4. Prueba
