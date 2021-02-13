@@ -95,7 +95,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "ºC",
                 data_inicial: 'data',
                 data: {
-                    url_data: '/api.php?q=tempout',
+                    url_data: '/graficas/api.php?q=tempout',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -118,7 +118,7 @@ AppGraficas.getPropiedades = function () {
                         tooltip: 'Temp. rocío',
                         dataset: {
                             id: 'dew',
-                            url_data: '/api.php?q=dew',
+                            url_data: '/graficas/api.php?q=dew',
                             borderColor: 'rgb(108, 146, 150)',
                             borderWidth: 1,
                             borderDash: [4, 3],
@@ -129,7 +129,7 @@ AppGraficas.getPropiedades = function () {
                         tooltip: 'Windchill',
                         dataset: {
                             id: 'windchill',
-                            url_data: '/api.php?q=windchill',
+                            url_data: '/graficas/api.php?q=windchill',
                             borderColor: 'rgb(1, 92, 12)',
                             borderWidth: 1,
                         }
@@ -149,7 +149,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "%",
                 data_inicial: 'hum',
                 hum: {
-                    url_data: '/api.php?q=outhum',
+                    url_data: '/graficas/api.php?q=outhum',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -172,7 +172,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "hPa",
                 data_inicial: 'pres',
                 pres: {
-                    url_data: '/api.php?q=bar',
+                    url_data: '/graficas/api.php?q=bar',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -197,7 +197,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: 'mm',
                 data_inicial: 'rain',
                 rain: {
-                    url_data: '/api.php?q=rain',
+                    url_data: '/graficas/api.php?q=rain',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -218,7 +218,7 @@ AppGraficas.getPropiedades = function () {
                     rainh: {
                         label: '1 h',
                         data: {
-                            url_data: '/api.php?q=rainh',
+                            url_data: '/graficas/api.php?q=rainh',
                             labels: 'horas',
                             datasets: {
                                 rainh: {
@@ -232,7 +232,7 @@ AppGraficas.getPropiedades = function () {
                     racum: {
                         label: 'Acum.',
                         data: {
-                            url_data: '/api.php?q=racum',
+                            url_data: '/graficas/api.php?q=racum',
                             labels: 'horas',
                             datasets: {
                                 racum: {
@@ -273,7 +273,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "mm/h",
                 data_inicial: 'intensidad',
                 intensidad: {
-                    url_data: '/api.php?q=rainrate',
+                    url_data: '/graficas/api.php?q=rainrate',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -297,7 +297,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "km/h",
                 data_inicial: 'wind',
                 wind: {
-                    url_data: '/api.php?q=hispeed-windspeed',
+                    url_data: '/graficas/api.php?q=hispeed-windspeed',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -339,7 +339,7 @@ AppGraficas.getPropiedades = function () {
                 titulo: "Dirección de viento",
                 data_inicial: 'dirv',
                 dirv: {
-                    url_data: '/api.php?q=dir',
+                    url_data: '/graficas/api.php?q=dir',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -372,12 +372,8 @@ AppGraficas.getPropiedades = function () {
                 unidad: '%',
                 data_inicial: 'distv',
                 distv: {
-                    url_data: '/api.php?q=distv-24',
+                    url_data: '/graficas/api.php?q=distv-24',
                     labels: 'dirs',
-                    // [
-                    //     "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-                    //     "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
-                    // ],
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
                         de los datos que llegan desde el backend */
@@ -394,26 +390,26 @@ AppGraficas.getPropiedades = function () {
                     dist24: {
                         label: '24 h',
                         checked: true,
-                        url_data: '/api.php?q=distv-24'
+                        url_data: '/graficas/api.php?q=distv-24'
                     },
 
                     dist12h: {
                         label: '12 h',
-                        url_data: '/api.php?q=distv-12'
+                        url_data: '/graficas/api.php?q=distv-12'
                     },
 
                     dist6h: {
                         label: '6 h',
-                        url_data: '/api.php?q=distv-6'
+                        url_data: '/graficas/api.php?q=distv-6'
                     },
 
                     dist3h: {
                         label: '3 h',
-                        url_data: '/api.php?q=distv-3'
+                        url_data: '/graficas/api.php?q=distv-3'
                     },
                     dist1h: {
                         label: '1 h',
-                        url_data: '/api.php?q=distv-1'
+                        url_data: '/graficas/api.php?q=distv-1'
                     }
                 },
 
@@ -434,7 +430,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "W/m2",
                 data_inicial: 'radiacion',
                 radiacion: {
-                    url_data: '/api.php?q=solarrad',
+                    url_data: '/graficas/api.php?q=solarrad',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave
@@ -457,7 +453,7 @@ AppGraficas.getPropiedades = function () {
                 unidad: "",
                 data_inicial: 'uv',
                 uv: {
-                    url_data: '/api.php?q=uv',
+                    url_data: '/graficas/api.php?q=uv',
                     labels: 'horas',
                     datasets: {
                         /*Cada propiedad del objeto datasets debe llamarse como la clave

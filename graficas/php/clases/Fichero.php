@@ -25,7 +25,7 @@ class Fichero
         $const = class_exists('Constantes') ? true : false;
 
         $valores = [
-            'nombre_fichero'        => 'downld02.txt',
+            'nombre_fichero'        => '../downld02.txt',
             'lineas_saltar'         => 3,
             'lineas_ult_24h'        => 145,
             'tiempo_entre_datos'    => 10,

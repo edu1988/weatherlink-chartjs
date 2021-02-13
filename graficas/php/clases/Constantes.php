@@ -3,7 +3,7 @@
 class Constantes
 {
     //Nombre del fichero txt de weatherlink
-    public static $nombre_fichero = 'downld02.txt';
+    public static $nombre_fichero = '../downld02.txt';
 
     //Número de lineas al comienzo del fichero que no contienen datos, solo cabeceras
     public static $lineas_saltar = 3;
