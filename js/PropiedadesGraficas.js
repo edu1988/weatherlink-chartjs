@@ -285,7 +285,9 @@ AppGraficas.getPropiedades = function () {
                         }
                     }
                 },
-                opciones: {},
+                opciones: {
+                    suggestedMin: 0,
+                },
             },
 
             velviento: {
@@ -331,8 +333,8 @@ AppGraficas.getPropiedades = function () {
                 },
             },
 
-            direccionv: {
-                id: 'direccionv', //Esta propiedad ha de llamarse como la propiedad del objeto
+            dirv: {
+                id: 'dirv', //Esta propiedad ha de llamarse como la propiedad del objeto
                 tipo: 'line',
                 titulo: "Dirección de viento",
                 data_inicial: 'dirv',
@@ -363,111 +365,113 @@ AppGraficas.getPropiedades = function () {
                 },
             },
 
-            // distv: {
-            //     id: 'distv', //Esta propiedad ha de llamarse como la propiedad del objeto
-            //     tipo: 'radar',
-            //     titulo: "Distribución del viento",
-            //     unidad: '%',
-            //     data_inicial: 'distv',
-            //     distv: {
-            //         url_data: '/datos-actuales-json/distv',
-            //         objeto_data: undefined,
-            //         datos: undefined,
-            //         labels: 'dirs',
-            //         datasets: {
-            //             /*Cada propiedad del objeto datasets debe llamarse como la clave
-            //             de los datos que llegan desde el backend */
-            //             porc: {
-            //                 id: 'porc',
-            //                 borderColor: 'rgba(15,133,127,0.6)',
-            //                 backgroundColor: 'rgba(15,133,127,0.1)',
-            //                 pointRadius: 2,
-            //             }
-            //         }
-            //     },
+            distv: {
+                id: 'distv', //Esta propiedad ha de llamarse como la propiedad del objeto
+                tipo: 'radar',
+                titulo: "Distribución del viento",
+                unidad: '%',
+                data_inicial: 'distv',
+                distv: {
+                    url_data: '/api.php?q=distv-24',
+                    labels: 'dirs',
+                    // [
+                    //     "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                    //     "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+                    // ],
+                    datasets: {
+                        /*Cada propiedad del objeto datasets debe llamarse como la clave
+                        de los datos que llegan desde el backend */
+                        porc: {
+                            id: 'porc',
+                            borderColor: 'rgba(15,133,127,0.6)',
+                            backgroundColor: 'rgba(15,133,127,0.1)',
+                            pointRadius: 2,
+                        }
+                    }
+                },
 
-            //     radio: {
-            //         dist24h: {
-            //             label: '24 h',
-            //             checked: true,
-            //             url_data: '/datos-actuales-json/viento-24'
-            //         },
+                radio: {
+                    dist24: {
+                        label: '24 h',
+                        checked: true,
+                        url_data: '/api.php?q=distv-24'
+                    },
 
-            //         dist12h: {
-            //             label: '12 h',
-            //             url_data: '/datos-actuales-json/viento-12'
-            //         },
+                    dist12h: {
+                        label: '12 h',
+                        url_data: '/api.php?q=distv-12'
+                    },
 
-            //         dist6h: {
-            //             label: '6 h',
-            //             url_data: '/datos-actuales-json/viento-6'
-            //         },
+                    dist6h: {
+                        label: '6 h',
+                        url_data: '/api.php?q=distv-6'
+                    },
 
-            //         dist3h: {
-            //             label: '3 h',
-            //             url_data: '/datos-actuales-json/viento-3'
-            //         },
-            //         dist1h: {
-            //             label: '1 h',
-            //             url_data: '/datos-actuales-json/viento-1'
-            //         }
-            //     },
+                    dist3h: {
+                        label: '3 h',
+                        url_data: '/api.php?q=distv-3'
+                    },
+                    dist1h: {
+                        label: '1 h',
+                        url_data: '/api.php?q=distv-1'
+                    }
+                },
 
-            //     opciones: {
-            //         scales: {},
-            //         aspectRatio: defaultOptions.aspectRatioDV
-            //     },
-            // },
+                functioncd: function (data) {
+                    return data['porc'];
+                },
 
-            // radiacion: {
-            //     id: 'radiacion', //Esta propiedad ha de llamarse como la propiedad del objeto
-            //     tipo: 'line',
-            //     titulo: "Radiación solar",
-            //     unidad: "W/m2",
-            //     data_inicial: 'radiacion',
-            //     radiacion: {
-            //         url_data: '/datos-actuales-json/horas-sr',
-            //         objeto_data: undefined,
-            //         datos: undefined,
-            //         labels: 'horas',
-            //         datasets: {
-            //             /*Cada propiedad del objeto datasets debe llamarse como la clave
-            //             de los datos que llegan desde el backend */
-            //             sr: {
-            //                 id: 'sr',
-            //                 borderColor: 'rgba(202,57,32,0.6)',
-            //                 backgroundColor: 'rgba(202,57,32,0.1)',
-            //             }
-            //         }
-            //     },
+                opciones: {
+                    scales: {},
+                    aspectRatio: asRatGrafDistVient
+                },
+            },
 
-            //     opciones: {},
-            // },
+            radiacion: {
+                id: 'radiacion', //Esta propiedad ha de llamarse como la propiedad del objeto
+                tipo: 'line',
+                titulo: "Radiación solar",
+                unidad: "W/m2",
+                data_inicial: 'radiacion',
+                radiacion: {
+                    url_data: '/api.php?q=solarrad',
+                    labels: 'horas',
+                    datasets: {
+                        /*Cada propiedad del objeto datasets debe llamarse como la clave
+                        de los datos que llegan desde el backend */
+                        solarrad: {
+                            id: 'solarrad',
+                            borderColor: 'rgba(202,57,32,0.6)',
+                            backgroundColor: 'rgba(202,57,32,0.1)',
+                        }
+                    }
+                },
 
-            // uv: {
-            //     id: 'uv', //Esta propiedad ha de llamarse como la propiedad del objeto
-            //     tipo: 'line',
-            //     titulo: "Índice ultravioleta",
-            //     //unidad: "",
-            //     data_inicial: 'uv',
-            //     uv: {
-            //         url_data: '/datos-actuales-json/horas-uv',
-            //         objeto_data: undefined,
-            //         datos: undefined,
-            //         labels: 'horas',
-            //         datasets: {
-            //             /*Cada propiedad del objeto datasets debe llamarse como la clave
-            //             de los datos que llegan desde el backend */
-            //             uv: {
-            //                 id: 'uv',
-            //                 borderColor: 'rgba(232,5,240,0.6)',
-            //                 backgroundColor: 'rgba(232,5,240,0.1)',
-            //             }
-            //         }
-            //     },
+                opciones: {},
+            },
 
-            //     opciones: {},
-            // },
+            uv: {
+                id: 'uv', //Esta propiedad ha de llamarse como la propiedad del objeto
+                tipo: 'line',
+                titulo: "Índice ultravioleta",
+                unidad: "",
+                data_inicial: 'uv',
+                uv: {
+                    url_data: '/api.php?q=uv',
+                    labels: 'horas',
+                    datasets: {
+                        /*Cada propiedad del objeto datasets debe llamarse como la clave
+                        de los datos que llegan desde el backend */
+                        uv: {
+                            id: 'uv',
+                            borderColor: 'rgba(232,5,240,0.6)',
+                            backgroundColor: 'rgba(232,5,240,0.1)',
+                        }
+                    }
+                },
+
+                opciones: {},
+            },
 
         } //Fin objeto propiedades
     }

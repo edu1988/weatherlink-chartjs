@@ -228,7 +228,7 @@ AppGraficas.app = {
             var datos_json = await response.json();
 
             /*Labels */
-            var labels = datos_json[objeto_data.labels];
+            var labels = datos_json[objeto_data.labels] || objeto_data.labels;
 
             /*Datasets */
             var obj_datasets = objeto_data.datasets;
@@ -343,13 +343,16 @@ AppGraficas.app = {
                         return response.json();
                     })
                     .then(function (res) {
-                        //Guardamos los datos recibidos para el futuro
-                        propiedades[nombre_grafica].radio[nombre_data].datos_guardados = res;
+                        //Obtener el array de datos de la respuesta
+                        if (funcion = propiedades[nombre_grafica].functioncd) {
+                            res = funcion(res);
+                        }
 
                         chart.config.data.datasets[0].data = res;
+                        chart.update();
                     });
             }
-            chart.update();
+
         }
 
 
@@ -506,9 +509,19 @@ AppGraficas.app = {
                     etiqueta = propiedades.checkbox[data.datasets[tooltipItems.datasetIndex].id].tooltip;
                 }
 
-                xlabel = data.labels[tooltipItems.index],
-                    ylabel = tooltipItems.value;
+                var xlabel = data.labels[tooltipItems.index];
+                var ylabel = tooltipItems.value;
+
                 var labelGeneral = xlabel + ' - ' + etiqueta + ': ' + ylabel + ' ' + unidad;
+
+                if (propiedades.id == 'distv') {
+                    ylabel = data.datasets[0].data[tooltipItems.index];
+                    labelGeneral = xlabel + ' - ' + ylabel + ' ' + unidad;
+                }
+
+                if (propiedades.id == 'dirv') {
+                    labelGeneral = xlabel + ' - ' + ylabel + ' ' + unidad;
+                }
 
                 return labelGeneral;
             }

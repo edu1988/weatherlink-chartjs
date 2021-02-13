@@ -121,7 +121,7 @@ class Fichero
                 $lluvias_totalizadas['horas'][] = $horaActual;
 
                 //Guardar la lluvia totalizada
-                $lluvias_totalizadas['rainh'][] = $lluvia_totalizada_hora;
+                $lluvias_totalizadas['rainh'][] = round($lluvia_totalizada_hora, 1);
 
                 //Resetear lluvia totalizada por hora
                 $lluvia_totalizada_hora = 0;
@@ -135,7 +135,7 @@ class Fichero
             $lluvias_totalizadas['horas'][] = $this->sumarHora($horaActual);
 
             //Guardar la lluvia totalizada
-            $lluvias_totalizadas['rainh'][] = $lluvia_totalizada_hora;
+            $lluvias_totalizadas['rainh'][] = round($lluvia_totalizada_hora, 1);
         }
 
         //Guardar el último período
@@ -195,24 +195,91 @@ class Fichero
         return $data;
     }
 
+    private function getDataDistViento($ultimas_horas)
+    {
+        $dirs = [
+            "N"     => 0,
+            "NNE"   => 0,
+            "NE"    => 0,
+            "ENE"   => 0,
+            "E"     => 0,
+            "ESE"   => 0,
+            "SE"    => 0,
+            "SSE"   => 0,
+            "S"     => 0,
+            "SSW"   => 0,
+            "SW"    => 0,
+            "WSW"   => 0,
+            "W"     => 0,
+            "WNW"   => 0,
+            "NW"    => 0,
+            "NNW"   => 0
+        ];
+
+        /*En base al parámetro, calculamos la cantidad de líneas que representan
+        esas últimas horas de datos*/
+        if ($ultimas_horas > 24) $ultimas_horas = 24;
+        $lineas = (24 - $ultimas_horas) * $this->lineasph + 1;
+
+        /*Obtenemos todo el array de direcciones y nos quedamos con lás ultimas líneas*/
+        $datos_dirs = $this->getData('dir', false)['dir'];
+        $datos_dirs = array_splice($datos_dirs, $lineas);
+
+        $keys = array_keys($dirs);
+
+        /*Sumatorio de la cantidad de veces que aparece cada dirección*/
+        $total = 0;
+        foreach ($datos_dirs as $dato) {
+            if (in_array($dato, $keys)) {
+                $dirs[$dato]++;
+                $total++;
+            }
+        }
+
+        // return $datos_dirs;
+
+        /*Pasamos el valor sumado total a porcentaje*/
+        foreach ($dirs as &$dir) {
+            $dir = round($dir * 100 / $total, 1);
+        }
+
+        /*Formatear el array a retornar*/
+        $datos = array();
+        foreach ($dirs as $direc => $porc) {
+            $datos['dirs'][] = $direc;
+            $datos['porc'][] = $porc;
+            // $datos[] = $porc;
+        }
+
+        return $datos;
+    }
+
     /*Función genérica para obtener las últimas 24 horas de datos
     de cualquier dato de formato simple (temps, hums, etc) */
     public function getData($campo, $json = true)
     {
-        $excep = [
-            'rainh' => 'getDataLluviaTotalizadaPorHoras',
-            'racum' => 'getDataLluviaAcumulada'
-        ];
-
-        if (in_array($campo, array_keys($excep))) {
-            $funcion = $excep[$campo];
-            $data = $this->$funcion();
-        }
-
         /*Campo compuesto (muchas claves) */
         $campos = explode('-', $campo);
 
-        if (!in_array($campo, array_keys($excep))) {
+        /*Excepciones (claves con sus propias funciones) */
+        $lluvias = [
+            'rainh' => 'getDataLluviaTotalizadaPorHoras',
+            'racum' => 'getDataLluviaAcumulada',
+        ];
+
+        $distv = [
+            'distv' => 'getDataDistViento'
+        ];
+
+        if (in_array($campos[0], array_keys($lluvias))) { //Excepciones (lluvias)
+
+            $funcion = $lluvias[$campo];
+            $data = $this->$funcion();
+        } else if (in_array($campos[0], array_keys($distv))) { //Excepción distribución viento
+
+            $funcion = $distv[$campos[0]];
+            $data = $this->$funcion($campos[1]);
+        } else { //Resto de casos (convenio api)
             $data = array();
 
             $num_filas = $this->getNumFilas();
@@ -251,6 +318,7 @@ class Fichero
     {
         $periodicidad = self::$constantes['tiempo_entre_datos'] ?? 10;
         $lineas_por_hora = (int)(60 / $periodicidad);
+        $this->lineasph = $lineas_por_hora;
         self::$lineas_24h = $lineas_por_hora * 24 + 1;
     }
 
